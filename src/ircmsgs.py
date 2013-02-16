@@ -137,25 +137,29 @@ class IrcMsg(object):
     def __str__(self):
         if self._str is not None:
             return self._str
+        if self.command == 'MODE':
+            lastArgPrefix = ''
+        else:
+            lastArgPrefix = ':'
         if self.prefix:
             if len(self.args) > 1:
-                self._str = ':%s %s %s :%s\r\n' % \
+                self._str = ':%s %s %s %s%s\r\n' % \
                             (self.prefix, self.command,
-                             ' '.join(self.args[:-1]), self.args[-1])
+                             ' '.join(self.args[:-1]), lastArgPrefix, self.args[-1])
             else:
                 if self.args:
-                    self._str = ':%s %s :%s\r\n' % \
-                                (self.prefix, self.command, self.args[0])
+                    self._str = ':%s %s %s%s\r\n' % \
+                                (self.prefix, self.command, lastArgPrefix, self.args[0])
                 else:
                     self._str = ':%s %s\r\n' % (self.prefix, self.command)
         else:
             if len(self.args) > 1:
-                self._str = '%s %s :%s\r\n' % \
+                self._str = '%s %s %s%s\r\n' % \
                             (self.command,
-                             ' '.join(self.args[:-1]), self.args[-1])
+                             ' '.join(self.args[:-1]), lastArgPrefix, self.args[-1])
             else:
                 if self.args:
-                    self._str = '%s :%s\r\n' % (self.command, self.args[0])
+                    self._str = '%s %s%s\r\n' % (self.command, lastArgPrefix, self.args[0])
                 else:
                     self._str = '%s\r\n' % self.command
         return self._str
